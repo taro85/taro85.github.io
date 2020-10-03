@@ -1,0 +1,89 @@
+﻿<head><meta charset=utf-8></head>
+<!-- 20.10.03 -->
+<font size="7">たっち　してね　 ver 0.26 </font> 
+<font size="5" onclick="set(2)"> SMALL </font> 
+<font size="5" onclick="set(3)"> LARGE </font> 
+<font size="5" onclick="density=1000"> SPARSE </font> 
+<font size="5" onclick="density=100"> DENSE </font> 
+<table width=1200 height=900 style="touch-action:none"><tr><td id=svg0>
+  <svg width=1200 height=900 overflow=hidden style="border: 1px solid #c00; ">
+<!--background: #fff;"-->
+<g id=ggg transform="scale(3)">
+  <circle id=xc1 cx=30 cy=150 r=15 stroke=#088 fill="none"/>
+  <circle id=xc2 cx=90 cy=150 r=15 stroke=#088 fill="none"/>
+  <circle id=xc3 cx=150 cy=150 r=15 stroke=#088 fill="none"/>
+  <circle id=xc4 cx=210 cy=150 r=15 stroke=#088 fill="none"/>
+  <circle id=xc5 cx=270 cy=150 r=15 stroke=#088 fill="none"/>
+  <circle id=xc6 cx=330 cy=150 r=15 stroke=#088 fill="none"/>
+  <circle id=ic1 cx=30 cy=150 r=15 stroke=red fill="none"/>
+  <circle id=ic2 cx=90 cy=150 r=15 stroke=red fill="none"/>
+  <circle id=ic3 cx=150 cy=150 r=15 stroke=red fill="none"/>
+  <circle id=ic4 cx=210 cy=150 r=15 stroke=red fill="none"/>
+  <circle id=ic5 cx=270 cy=150 r=15 stroke=red fill="none"/>
+  <circle id=ic6 cx=330 cy=150 r=15 stroke=red fill="none"/>
+  <circle id=cir1 cx=30 cy=90 r=13 fill=red />
+  <circle id=cir2 cx=90 cy=30 r=13 fill=orange />
+  <circle id=cir3 cx=150 cy=30 r=13 fill=yellow />
+  <circle id=cir4 cx=210 cy=30 r=13 fill=green />
+  <circle id=cir5 cx=270 cy=30 r=13 fill=blue />
+  <circle id=cir6 cx=330 cy=30 r=13 fill=purple />
+  <text id=txt1 x=20 y=180 ></text>
+  <text id=txt2 x=80 y=180 ></text>
+  <text id=txt3 x=140 y=180 ></text>
+  <text id=txt4 x=200 y=180 ></text>
+  <text id=txt5 x=260 y=180 ></text>
+  <text id=txt6 x=320 y=180 ></text>
+  <text id=txx1 x=20 y=200 ></text>
+  <text id=txx2 x=80 y=200 ></text>
+  <text id=txx3 x=140 y=200 ></text>
+  <text id=txx4 x=200 y=200 ></text>
+  <text id=txx5 x=260 y=200 ></text>
+  <text id=txx6 x=320 y=200 ></text>
+ </g> 
+</svg>
+</table>
+
+<script>
+  var scale = 3, density=1000;
+  function set(size) {
+    scale = size;
+    ggg.setAttribute("transform", "scale(" + size + ")");
+//    alert(size);
+  }
+
+var cir=[cir1,cir2,cir3,cir4,cir5,cir6], ciy=[0,-30,-60,-90,-120,-150];
+var xc=[xc1,xc2,xc3,xc4,xc5,xc6], rxc=[0,0,0,0,0,0];
+var txt=[txt1,txt2,txt3,txt4,txt5,txt6], 
+    txx=[txx1,txx2,txx3,txx4,txx5,txx6];
+function fnc() {
+  for(var i in xc)
+    if(rxc[i]>0) xc[i].r.baseVal.value = rxc[i], rxc[i]-=.1;
+
+  for(var i in cir){
+    cir[i].cy.baseVal.value = ciy[i]++;
+    if(ciy[i]>200) ciy[i]=-density*Math.random();
+  }
+
+  setTimeout(fnc, 1);
+}
+fnc();
+
+
+svg0.onpointerdown=function(event){
+  var cx=event.clientX+pageXOffset, cy=event.clientY+pageYOffset, a=svg0; 
+  while(a){ cx-=a.offsetLeft; cy-=a.offsetTop; a=a.offsetParent; }
+  cx /= scale;
+  cy /= scale;
+
+  var id;
+  for(var i in xc)
+    if(10+60*i<=cx && cx< 50+60*i) id=i;
+
+//  xc[id].cx.baseVal.value = cx;
+  xc[id].cy.baseVal.value = ciy[id]; // cy;
+  xc[id].r.baseVal.value = rxc[id] = 15;
+  var sc = (ciy[id] - 150)/15, asc=Math.abs(sc);
+  txt[id].innerHTML = sc.toFixed(1);
+  txx[id].innerHTML=(asc<1?"Perfect":asc<2?"Great":asc<3?"Nice":asc<4?"Bad":"Miss" );
+}
+</script>
