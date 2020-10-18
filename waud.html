@@ -4,8 +4,6 @@ touch-action:pinch-zoom;
 }
 </style>
 
-<div id=stdout style="font-size:120pt; font-family:monospace"></div>
-<div id=stdout2></div>
 
 <button type="button" style="color:black" onclick="bell(buf1)">こうげき</button>
 <button type="button" style="color:green" onclick="bell(buf4)">ほいみ</button>
@@ -13,31 +11,6 @@ touch-action:pinch-zoom;
 <button type="button" style="color:red" onclick="bell(buf2)">いた</button>
 
 <script>
-var start=new Date();
-var go1=0;
-//var aud=new Audio("bell.mp3");
-//var bell=function(){ aud.play(); }
-
-function proc(){
-  var t=new Date()-start, tx=t,
-    t0=Math.floor(t/3600000),
-    t1=Math.floor((t-=3600000*t0)/60000),
-    t2=Math.floor((t-=60000*t1)/1000),
-    t3=Math.floor((t-=1000*t2)/10);
-
-  function d2(a){
-    return String(Math.floor(a/10))+a%10;
-  }
-
-  tx /= 60000;
-  if(Int(tx)>go1){ go1=tx; bell(buf); }
-
-  stdout.innerHTML=tx + "/" + go1 ;
-  bell(buf);
-
-//stdout2.innerHTML=tx.toPrecision(3);
-  stdout2.innerHTML=d2(t0) + ":" + d2(t1) + ":" + d2(t2) + "." + d2(t3) + " "+go1 + ":" + go2 + ":" + go3 + ":" + "...#...".substr(3-phase, 4);
-}
 
 var context;
 try{
@@ -107,5 +80,4 @@ try{
 
 }
 
-setInterval(bell, 1000);
 </script>
