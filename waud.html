@@ -1,0 +1,114 @@
+<!--14/1/24, 15.6.10 timer -->
+<!--15/8/11 easy audio 
+    15.10.12 fm bell-->
+<style>
+body{
+touch-action:pinch-zoom;
+}
+</style>
+
+<div id=stdout style="font-size:120pt; font-family:monospace"></div>
+<div id=stdout2></div>
+
+<button type="button" style="color:black" onclick="bell(buf1)">こうげき</button>
+<button type="button" style="color:green" onclick="bell(buf4)">ほいみ</button>
+<button type="button" style="color:blue" onclick="bell(buf3)">みす</button>
+<button type="button" style="color:red" onclick="bell(buf2)">いた</button>
+
+<script>
+var start=new Date();
+var go1=0;
+//var aud=new Audio("bell.mp3");
+//var bell=function(){ aud.play(); }
+
+function proc(){
+  var t=new Date()-start, tx=t,
+    t0=Math.floor(t/3600000),
+    t1=Math.floor((t-=3600000*t0)/60000),
+    t2=Math.floor((t-=60000*t1)/1000),
+    t3=Math.floor((t-=1000*t2)/10);
+
+  function d2(a){
+    return String(Math.floor(a/10))+a%10;
+  }
+
+  tx /= 60000;
+  if(Int(tx)>go1){ go1=tx; bell(buf); }
+
+  stdout.innerHTML=tx + "/" + go1 ;
+  bell(buf);
+
+//stdout2.innerHTML=tx.toPrecision(3);
+  stdout2.innerHTML=d2(t0) + ":" + d2(t1) + ":" + d2(t2) + "." + d2(t3) + " "+go1 + ":" + go2 + ":" + go3 + ":" + "...#...".substr(3-phase, 4);
+}
+
+var context;
+try{
+  context=new(window.AudioContext||window.webkitAudioContext)();
+
+  function voice(o3,o3r,decay){
+    var buf=context.createBuffer(1, 8000, 22050);
+    var ary=buf.getChannelData(0);
+    var vol=.5, o1=1, o2=o3;
+    for(var i in ary){
+      if(o2>=o3) o1=Math.random()*2-1, o2-=o3, o3*=o3r;
+      o2++;
+      ary[i]=o1 * vol;
+      vol *= decay;
+    }
+    return buf;
+  }
+
+  buf1=voice(3,1.002,.9996);
+  buf2=voice(30,.994, .9996);
+
+  function voice2(o3,o3r,decay){
+    var buf=context.createBuffer(1, 7000, 22050);
+    var ary=buf.getChannelData(0);
+    var vol=.5, o1=1, o2=o3, ph=0, t, o3o=o3, o3x=o3*3;
+    for(var i in ary){
+      if(o2>=o3) o1=-o1, o2-=o3, t=o3, o3=o3x, o3x=t;
+      if(ph==0 && i>2000) o3=o3o*Math.pow(2,1.33/12), o3x=o3*3, ph++;
+      if(ph==1 && i>4000) o3=o3o*Math.pow(2,4.66/12), o3x=o3*3, ph++;
+      o2++;
+      ary[i]=o1 * vol;
+      vol *= decay;
+    }
+    return buf;
+  }
+  buf3=voice2(5,1,.9998);
+
+  function voice3(o3,o3r,decay){
+    var buf=context.createBuffer(1, 14000, 22050);
+    var ary=buf.getChannelData(0);
+    var vol=.5, o1=1, o2=o3, ph=0, t, o3o=o3, o3x=o3*3;
+    for(var i in ary){
+      if(o2>=o3) o1=-o1, o2-=o3, t=o3, o3=o3x, o3x=t;
+      if(ph==0 && i>2000) o3=o3o*Math.pow(2,-3/12), o3x=o3*3, ph++;
+      if(ph==1 && i>4000) o3=o3o*Math.pow(2,-1/12), o3x=o3*3, ph++;
+      if(ph==2 && i>6000) o3=o3o*Math.pow(2,-4/12), o3x=o3*3, ph++;
+      if(ph==3 && i>8000) o3=o3o*Math.pow(2,-2/12), o3x=o3*3, ph++;
+      if(ph==4 && i>10000) o3=o3o*Math.pow(2,-5/12), o3x=o3*3, ph++;
+      if(ph==5 && i>12000) o3=o3o*Math.pow(2,-6/12), o3x=o3*3, ph++;
+      o2++;
+      ary[i]=o1 * vol;
+      vol *= decay;
+    }
+    return buf;
+  }
+  buf4=voice3(8,1,.9999);
+
+  
+  bell=function(buf){
+    var source=context.createBufferSource();
+    source.buffer=buf;
+    source.connect(context.destination);
+//  source.onended=play;
+    source.start();
+  }
+}catch(e){ 
+
+}
+
+setInterval(bell, 1000);
+</script>
